@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1> Drag and Drop</h1>
+
+    <div class="item" id="draggableItem" draggable="true">Drag me</div>
+
+    
+    <div class="container">
+        <div class="box" id="box1">Drop Zone 1</div>
+        <div class="box" id="box2">Drop Zone 2</div>
+    </div>
+
+    <div class="delete-zone" id="deleteZone">Delete Zone</div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <p>OOPS!!! You deleted the item! Would you like to bring it back?</p>
+            <button id="bringBackButton">Bring Me Back</button>
+
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
