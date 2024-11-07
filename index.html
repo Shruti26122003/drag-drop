@@ -7,11 +7,10 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1> Drag and Drop</h1>
+    <h1>Drag and Drop</h1>
 
     <div class="item" id="draggableItem" draggable="true">Drag me</div>
 
-    
     <div class="container">
         <div class="box" id="box1">Drop Zone 1</div>
         <div class="box" id="box2">Drop Zone 2</div>
@@ -19,11 +18,20 @@
 
     <div class="delete-zone" id="deleteZone">Delete Zone</div>
 
+    <div class="reorderable-list">
+        <h2>Reorderable List</h2>
+        <ul id="reorderable-list">
+            <li class="list-item" draggable="true">Item 1</li>
+            <li class="list-item" draggable="true">Item 2</li>
+            <li class="list-item" draggable="true">Item 3</li>
+            <li class="list-item" draggable="true">Item 4</li>
+        </ul>
+    </div>
+
     <div class="modal" id="modal">
         <div class="modal-content">
             <p>OOPS!!! You deleted the item! Would you like to bring it back?</p>
             <button id="bringBackButton">Bring Me Back</button>
-
         </div>
     </div>
 

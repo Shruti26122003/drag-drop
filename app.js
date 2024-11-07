@@ -3,8 +3,10 @@ const boxes = document.querySelectorAll('.box');
 const deleteZone = document.getElementById('deleteZone');
 const modal = document.getElementById('modal');
 const bringBackButton = document.getElementById('bringBackButton');
+const listItems = document.querySelectorAll('.list-item'); 
+let draggedItem = null;
 
-// Drag functionality
+// Drag functionality for main item
 item.addEventListener('dragstart', (e) => {
     e.dataTransfer.setData('text/plain', e.target.id);
     setTimeout(() => e.target.classList.add('hide'), 0);
@@ -24,32 +26,20 @@ deleteZone.addEventListener('dragover', dragOver);
 deleteZone.addEventListener('dragleave', dragLeave);
 deleteZone.addEventListener('drop', deleteDrop);
 
-// Drag events
-function dragEnter(e) {
-    e.preventDefault();
-    e.target.classList.add('drag-over');
-}
+// Drag events for reorderable list items
+listItems.forEach((listItem) => {
+    listItem.addEventListener('dragstart', listDragStart);
+    listItem.addEventListener('dragenter', dragEnter);
+    listItem.addEventListener('dragover', dragOver);
+    listItem.addEventListener('dragleave', dragLeave);
+    listItem.addEventListener('drop', listDrop);
+});
 
-function dragOver(e) {
-    e.preventDefault();
-    e.target.classList.add('drag-over');
-}
-
-function dragLeave(e) {
-    e.target.classList.remove('drag-over');
-}
-
-function drop(e, targetBox) {
-    e.target.classList.remove('drag-over');
-    
-    const id = e.dataTransfer.getData('text/plain');
-    const draggable = document.getElementById(id);
-
-    // Move the item to the target box with animation
-    moveToTarget(draggable, targetBox);
-
-    // Clear the text of the drop zone (targetBox)
-    targetBox.textContent = ''; // Remove the text from the target drop zone
+// List item drag start
+function listDragStart(e) {
+    draggedItem = e.target;
+    e.dataTransfer.setData('text/plain', e.target.id);
+    setTimeout(() => e.target.classList.add('hide'), 0);
 }
 
 // Delete drop event
@@ -88,6 +78,34 @@ bringBackButton.addEventListener('click', () => {
     });
 });
 
+// Drag events
+function dragEnter(e) {
+    e.preventDefault();
+    e.target.classList.add('drag-over');
+}
+
+function dragOver(e) {
+    e.preventDefault();
+    e.target.classList.add('drag-over');
+}
+
+function dragLeave(e) {
+    e.target.classList.remove('drag-over');
+}
+
+function drop(e, targetBox) {
+    e.target.classList.remove('drag-over');
+    
+    const id = e.dataTransfer.getData('text/plain');
+    const draggable = document.getElementById(id);
+
+    // Move the item to the target box with animation
+    moveToTarget(draggable, targetBox);
+
+    // Clear the text of the drop zone (targetBox)
+    targetBox.textContent = ''; // Remove the text from the target drop zone
+}
+
 // Move the item to the target position smoothly
 function moveToTarget(draggable, targetBox) {
     draggable.classList.remove('hide');
@@ -116,4 +134,15 @@ function moveToTarget(draggable, targetBox) {
         clone.remove();
         targetBox.appendChild(draggable);
     }, 500); // Match transition duration
+}
+
+// Reorderable list drop event
+function listDrop(e) {
+    e.target.classList.remove('drag-over');
+    
+    // Only swap if the dropped target is not the same as the dragged item
+    if (e.target !== draggedItem) {
+        const list = draggedItem.parentNode;
+        list.insertBefore(draggedItem, e.target.nextSibling);
+    }
 }
