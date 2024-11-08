@@ -167,3 +167,33 @@ h1 {
     background-color: #2980b9;
     transform: scale(1.05);
 }
+
+/* Style for drop preview text in the box */
+.drop-preview {
+    padding: 10px;
+    font-size: 14px;
+    color: #777;
+    border: 1px dashed #777;
+    background-color: #f3f3f3;
+    opacity: 0.8;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Style for drop indicator to highlight the box */
+.drop-indicator {
+    height: 10px;
+    background-color: #007bff;
+    margin: 5px 0;
+}
+
+#previewButton {
+    visibility: hidden; /* Initially hidden */
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin: 10px;
+}
+
+
+

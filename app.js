@@ -4,13 +4,23 @@ const deleteZone = document.getElementById('deleteZone');
 const modal = document.getElementById('modal');
 const bringBackButton = document.getElementById('bringBackButton');
 const listItems = document.querySelectorAll('.list-item'); 
+const previewButton = document.getElementById('previewButton');
 let draggedItem = null;
 
 // Drag functionality for main item
 item.addEventListener('dragstart', (e) => {
     e.dataTransfer.setData('text/plain', e.target.id);
     setTimeout(() => e.target.classList.add('hide'), 0);
-});
+
+
+        // Show a preview on the previewButton
+        previewButton.textContent = `Preview: ${e.target.textContent}`;
+        previewButton.style.visibility = 'visible';
+    });
+
+    item.addEventListener('dragend', () => {
+        previewButton.style.visibility = 'hidden';
+    });
 
 // Add events to each box
 boxes.forEach((box) => {
@@ -40,12 +50,16 @@ function listDragStart(e) {
     draggedItem = e.target;
     e.dataTransfer.setData('text/plain', e.target.id);
     setTimeout(() => e.target.classList.add('hide'), 0);
+
+
+        // Show a preview on the previewButton
+        previewButton.textContent = `Preview: ${e.target.textContent}`;
+        previewButton.style.visibility = 'visible';
 }
 
 // Delete drop event
 function deleteDrop(e) {
     e.target.classList.remove('drag-over');
-
     const id = e.dataTransfer.getData('text/plain');
     const draggable = document.getElementById(id);
 
@@ -95,14 +109,11 @@ function dragLeave(e) {
 
 function drop(e, targetBox) {
     e.target.classList.remove('drag-over');
-    
     const id = e.dataTransfer.getData('text/plain');
     const draggable = document.getElementById(id);
 
     // Move the item to the target box with animation
     moveToTarget(draggable, targetBox);
-
-    // Clear the text of the drop zone (targetBox)
     targetBox.textContent = ''; // Remove the text from the target drop zone
 }
 
@@ -136,13 +147,88 @@ function moveToTarget(draggable, targetBox) {
     }, 500); // Match transition duration
 }
 
-// Reorderable list drop event
+// Reorderable list drop event with swap functionality
 function listDrop(e) {
     e.target.classList.remove('drag-over');
     
     // Only swap if the dropped target is not the same as the dragged item
     if (e.target !== draggedItem) {
-        const list = draggedItem.parentNode;
-        list.insertBefore(draggedItem, e.target.nextSibling);
+        const parent = draggedItem.parentNode;
+        
+        // Clone both items for swap
+        const draggedClone = draggedItem.cloneNode(true);
+        const targetClone = e.target.cloneNode(true);
+        
+        // Replace dragged item with targetClone
+        parent.replaceChild(targetClone, draggedItem);
+        
+        // Replace target item with draggedClone
+        parent.replaceChild(draggedClone, e.target);
+        
+        // Reattach event listeners
+        reattachListeners(draggedClone);
+        reattachListeners(targetClone);
     }
 }
+
+// Reattach drag event listeners to the swapped items
+function reattachListeners(item) {
+    item.addEventListener('dragstart', listDragStart);
+    item.addEventListener('dragenter', dragEnter);
+    item.addEventListener('dragover', dragOver);
+    item.addEventListener('dragleave', dragLeave);
+    item.addEventListener('drop', listDrop);
+}
+
+// Drop Preview functionality
+function createDropPreview(box) {
+    const preview = document.createElement('div');
+    preview.className = 'drop-preview';
+    preview.textContent = draggedItem ? draggedItem.textContent : 'Preview';
+    box.appendChild(preview);
+    return preview;
+}
+
+function showDropPreview(box) {
+    if (!box.querySelector('.drop-preview')) {
+        createDropPreview(box);
+    }
+}
+
+function removeDropPreview(box) {
+    const preview = box.querySelector('.drop-preview');
+    if (preview) {
+        box.removeChild(preview);
+    }
+}
+
+// Drop Indicator functionality
+function addDropIndicator(box) {
+    box.classList.add('drop-indicator');
+}
+
+function removeDropIndicator(box) {
+    box.classList.remove('drop-indicator');
+}
+
+// Apply updated drag events to boxes to show preview and indicator
+boxes.forEach((box) => {
+    box.addEventListener('dragenter', (e) => {
+        dragEnter(e);
+        addDropIndicator(box);
+        showDropPreview(box);
+    });
+
+    box.addEventListener('dragleave', (e) => {
+        dragLeave(e);
+        removeDropIndicator(box);
+        removeDropPreview(box);
+    });
+
+    box.addEventListener('drop', (e) => {
+        drop(e, box);
+        removeDropIndicator(box);
+        removeDropPreview(box);
+    });
+});
+
