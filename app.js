@@ -8,8 +8,9 @@ const previewButton = document.getElementById('previewButton');
 let draggedItem = null;
 let draggedTarget = null;
 
-// Store the original parent of the "Drag me" button
+// Store the original parent and position index of the "Drag me" button
 let originalParent = item.parentElement;
+let originalIndex = Array.from(originalParent.children).indexOf(item);
 
 // Drag functionality for main item
 item.addEventListener('dragstart', (e) => {
@@ -18,7 +19,7 @@ item.addEventListener('dragstart', (e) => {
 });
 
 item.addEventListener('dragend', () => {
-    previewButton.style.visibility = 'hidden';
+    previewButton.style.visibility = 'visible';  // Ensure preview button is visible after drag ends
 });
 
 // Add events to each box
@@ -69,9 +70,17 @@ function showModal() {
 bringBackButton.addEventListener('click', () => {
     modal.style.display = 'none';
     
-    // Restore the "Drag me" button to its original parent
-    originalParent.appendChild(item);
+    // Restore the "Drag me" button to its original parent and position
+    const children = Array.from(originalParent.children);
+    if (children[originalIndex]) {
+        originalParent.insertBefore(item, children[originalIndex]);
+    } else {
+        originalParent.appendChild(item);
+    }
     item.style.display = 'inline-block';
+
+    // Make sure the preview button is visible
+    previewButton.style.visibility = 'visible';
 });
 
 // Drag events
@@ -132,7 +141,7 @@ function reattachListeners(item) {
 
 // Event listener for preview button
 previewButton.addEventListener('click', () => {
-    if (draggedTarget.length) {
+    if (draggedTarget && draggedTarget.length) {
         alert(`Swapped: ${draggedTarget[0]} with ${draggedTarget[1]}`);
     } else {
         alert('No recent swap made!');
